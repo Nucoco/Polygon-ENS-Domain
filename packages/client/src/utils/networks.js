@@ -4,6 +4,7 @@ const networks = {
   "0x2a": "Kovan",
   "0x4": "Rinkeby",
   "0x5": "Goerli",
+  "0xaa36a7": "Sepolia",
   "0x61": "BSC Testnet",
   "0x38": "BSC Mainnet",
   "0x89": "Polygon Mainnet",
