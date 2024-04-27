@@ -28,12 +28,19 @@ contract Domains is ERC721URIStorage {
     // ドメインコンテンツマップ
     mapping(string => string) public records;
 
+    // domains.keys()みたいなことが出来ないので、ドメイン一覧を別途保持
+    mapping(uint => string) public names;
+
     address payable public owner;
 
     modifier onlyOwner() {
         require(isOwner(), "You aren't the owner");
         _;
     }
+
+    error Unauthorized();
+    error AlreadyRegistered();
+    error InvalidName(string name);
 
     constructor(string memory _tld) payable ERC721("Ninja Name Service", "NNS") {
         owner = payable(msg.sender);
@@ -52,6 +59,19 @@ contract Domains is ERC721URIStorage {
         require(success, "Failed to withdraw Matic");
     }
 
+    function getAllNames() public view returns (string[] memory) {
+        string[] memory allNames = new string[](_tokenIds.current());
+        for (uint i = 0; i < _tokenIds.current(); i++) {
+            allNames[i] = names[i];
+        }
+
+        return allNames;
+    }
+
+    function valid(string calldata name) public pure returns (bool) {
+        return StringUtils.strlen(name) >= 3 && StringUtils.strlen(name) <= 10;
+    }
+
     // 価格算出: ただの計算ロジックなのでpure
     function price(string calldata name) public pure returns (uint) {
         uint len = StringUtils.strlen(name);
@@ -68,7 +88,9 @@ contract Domains is ERC721URIStorage {
     // calldataは一時的で不変（memoryは一時的で可変）ガスが一番安い
     function register(string calldata name) public payable {
         // そのドメインがまだ登録されていないか確認
-        require(domains[name] == address(0));
+        if (domains[name] != address(0)) revert AlreadyRegistered();
+        if (!valid(name)) revert InvalidName(name);
+
         uint _price = price(name);
 
         // 支払い額チェック
@@ -108,6 +130,7 @@ contract Domains is ERC721URIStorage {
         domains[name] = msg.sender;
         console.log("%s has registered a domain!", msg.sender);
 
+        names[newRecordId] = name;
         _tokenIds.increment();
     }
 
@@ -117,7 +140,8 @@ contract Domains is ERC721URIStorage {
 
     function setRecord(string calldata name, string calldata record) public {
         // トランザクションの送信者であることを確認しています。
-        require(domains[name] == msg.sender);
+        // カスタムエラー
+         if (msg.sender != domains[name]) revert Unauthorized();
         records[name] = record;
     }
 
