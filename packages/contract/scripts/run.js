@@ -14,16 +14,53 @@ const main = async () => {
   console.log('Contract deployed by:', owner.address);
 
   // コントラクト呼び出し
-  const txn = await domainContract.register('doom', {
-    value: hre.ethers.utils.parseEther('0.0000003'),
+  let txn = await domainContract.register('doom', {
+    value: hre.ethers.utils.parseEther('10.0'),
   });
   await txn.wait();
 
   const domainOwner = await domainContract.getAddress('doom');
   console.log('Owner of domain doom: ', domainOwner);
 
-  const balance = await hre.ethers.provider.getBalance(domainContract.address);
-  console.log('Contract balance:', hre.ethers.utils.formatEther(balance));
+
+  // ----withdrawal test
+  const getBalanceEther = async (address) => {
+    const balance = await hre.ethers.provider.getBalance(address);
+    return hre.ethers.utils.formatEther(balance)
+  }
+  // 残高移動確認用
+  const balanceLog = {
+    contract: {
+      before: undefined,
+      after: undefined
+    },
+    owner: {
+      before: undefined,
+      after: undefined
+    }
+  }
+  balanceLog.contract.before = await getBalanceEther(domainContract.address);
+  balanceLog.owner.before  = await getBalanceEther(owner.address);
+
+  // withdraw by not owner; should be failed
+  try {
+    txn = await domainContract.connect(superCoder).withdraw();
+    await txn.wait();
+  } catch(error){
+    console.log('Could not rob contract');
+  }
+
+  // withdraw by owner
+  txn = await domainContract.connect(owner).withdraw();
+  await txn.wait();
+
+  // contract と owner の残高を確認
+  balanceLog.contract.after = await getBalanceEther(domainContract.address);
+  balanceLog.owner.after = await getBalanceEther(owner.address);
+
+  console.log('----- Balance log -----')
+  console.log(`Contract: ${balanceLog.contract.before} -> ${balanceLog.contract.after}`);
+  console.log(`Owner   : ${balanceLog.owner.before} -> ${balanceLog.owner.after}`);
 };
 
 const runMain = async () => {

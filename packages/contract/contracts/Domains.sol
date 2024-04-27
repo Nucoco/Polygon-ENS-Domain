@@ -28,9 +28,28 @@ contract Domains is ERC721URIStorage {
     // ドメインコンテンツマップ
     mapping(string => string) public records;
 
+    address payable public owner;
+
+    modifier onlyOwner() {
+        require(isOwner(), "You aren't the owner");
+        _;
+    }
+
     constructor(string memory _tld) payable ERC721("Ninja Name Service", "NNS") {
+        owner = payable(msg.sender);
         tld = _tld;
         console.log("%s name service deployed", _tld);
+    }
+
+    function isOwner() public view returns (bool) {
+        return msg.sender == owner;
+    }
+
+    function withdraw() public onlyOwner {
+        uint amount = address(this).balance;
+
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Failed to withdraw Matic");
     }
 
     // 価格算出: ただの計算ロジックなのでpure
