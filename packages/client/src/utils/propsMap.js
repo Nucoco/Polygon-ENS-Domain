@@ -21,7 +21,6 @@ export const componentToStatePropsMap = ({
       currentAccount,
     },
     propsToNotConnectedContainer: {
-      connectWallet,
       setCurrentAccount,
     },
     propsToInputForm: {
@@ -34,6 +33,7 @@ export const componentToStatePropsMap = ({
       editing,
       setEditing,
       network,
+      setMints,
     },
     propsToMints: {
       currentAccount,

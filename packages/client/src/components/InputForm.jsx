@@ -13,6 +13,7 @@ const InputForm = ({
     editing,
     setEditing,
     network,
+    setMints,
   }
 }) => {
   if (network !== 'Sepolia') {
@@ -48,7 +49,7 @@ const InputForm = ({
           <button
             className='cta-button mint-button'
             disabled={loading}
-            onClick={() => updateDomain(domain, setDomain, record, setRecord, setLoading)}
+            onClick={() => updateDomain(domain, setDomain, record, setRecord, setLoading, setMints)}
           >
             Set record
           </button>
@@ -60,7 +61,7 @@ const InputForm = ({
         <button
           className='cta-button mint-button'
           disabled={loading}
-          onClick={() => mintDomain(domain, setDomain, record, setRecord)}
+          onClick={() => mintDomain(domain, setDomain, record, setRecord, setMints)}
         >
           Mint
         </button>

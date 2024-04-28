@@ -1,6 +1,7 @@
+import { connectWallet } from "../utils/wallet";
+
 const NotConnectedContainer = ({
   features: {
-    connectWallet,
     setCurrentAccount,
   }
 }) => (

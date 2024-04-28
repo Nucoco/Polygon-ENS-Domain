@@ -5,7 +5,7 @@ const CONTRACT_ADDRESS = '0xEF760bCFE917793Fefd505cf27105a56d45F8166';
 
 const connectToContract = () => {
   if (window.ethereum) {
-    const provider = new ethers.providers.Web3Provider(ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
     return contract
@@ -50,7 +50,7 @@ const fetchMints = async (setMints) => {
   }
 }
 
-const mintDomain = async (domain, setDomain, record, setRecord) => {
+const mintDomain = async (domain, setDomain, record, setRecord, setMints) => {
   domain?.length < 3 && alert('Domain must be at least 3 characters long');
   if (!domain || domain.length < 3) {
     return;
@@ -58,7 +58,7 @@ const mintDomain = async (domain, setDomain, record, setRecord) => {
 
   try {
     // connect to contract
-    const contract = connectToContract(ethereum);
+    const contract = connectToContract();
     if (contract) {
       const price = calculatePrice(domain);
       console.log('Minting domain', domain, 'with price', price);
@@ -82,7 +82,7 @@ const mintDomain = async (domain, setDomain, record, setRecord) => {
 
         // fetchMints関数実行後2秒待ちます。
         setTimeout(() => {
-          fetchMints();
+          fetchMints(setMints);
         }, 2000);
 
         setRecord('');
@@ -96,7 +96,7 @@ const mintDomain = async (domain, setDomain, record, setRecord) => {
   }
 };
 
-const updateDomain = async (domain, setDomain, record, setRecord, setLoading) => {
+const updateDomain = async (domain, setDomain, record, setRecord, setLoading, setMints) => {
   if (!record || !domain) { return }
   setLoading(true);
   console.log('Updating domain', domain, 'with record', record);
@@ -107,7 +107,7 @@ const updateDomain = async (domain, setDomain, record, setRecord, setLoading) =>
         await tx.wait();
         console.log('Record set https://sepolia.etherscan.io/tx/'+tx.hash);
 
-        fetchMints();
+        fetchMints(setMints);
         setRecord('');
         setDomain('');
       }
