@@ -42,6 +42,7 @@ const Mints = ({
       </div>
     </div>);
   }
+  return <></>;
 };
 
 export default Mints;
