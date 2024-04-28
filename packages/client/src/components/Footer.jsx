@@ -1,4 +1,4 @@
-import twitterLogo from './assets/twitter-logo.svg';
+import twitterLogo from '../assets/twitter-logo.svg';
 
 const TWITTER_HANDLE = 'UNCHAIN_tech';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;

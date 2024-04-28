@@ -1,5 +1,5 @@
-import ethLogo from './assets/ethlogo.png';
-import polygonLogo from './assets/polygonlogo.png';
+import ethLogo from '../assets/ethlogo.png';
+import polygonLogo from '../assets/polygonlogo.png';
 
 const Header = ({
   features: {
