@@ -18,7 +18,7 @@ const Mints = () => {
         <div className="mint-row">
           <a
             className="link"
-            href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`}
+            href={`https://testnets.opensea.io/assets/sepolia/${CONTRACT_ADDRESS}/${mint.id}`}
             target="_blank"
             rel="noopener noreferrer"
           >
